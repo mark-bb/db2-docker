@@ -1,0 +1,5 @@
+*.gz
+distrib/*
+tar-config.sh
+database/*
+database-nr/*

@@ -1,0 +1,13 @@
+ARG         IMAGE_BASE
+
+FROM        $IMAGE_BASE
+MAINTAINER  Mark Barinstein <mbarinstein@stsoft.ru>
+ARG         INSTALLCMD=/setup/install.sh
+
+COPY        cfg-nr/* /setup/
+RUN         chmod +x $INSTALLCMD && $INSTALLCMD
+
+EXPOSE      50000 
+USER        db2inst1
+WORKDIR     /database/config/db2inst1
+ENTRYPOINT  ["/setup/startup.sh"]
