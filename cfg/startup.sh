@@ -25,6 +25,8 @@ function fix_files() {
   set -x
   MYHOST="$(cat /proc/sys/kernel/hostname)"
   "${DB2PATH?}/instance/db2iset" -g DB2SYSTEM=${MYHOST?}
+  "${DB2PATH?}/bin/db2greg" -getinstrec instancename=${DB2INSTANCE?} | grep InstanceName &>/dev/null \
+	  || "${DB2PATH?}/bin/db2greg" -addinstrec service=DB2,instancename=${DB2INSTANCE?}
   echo "0 ${MYHOST?} 0" > "${DB2_HOME?}/db2nodes.cfg"
 
   if ! grep -E "[^0-9]${DB2PORT?}/tcp" /etc/services &>/dev/null; then
