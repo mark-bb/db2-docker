@@ -14,6 +14,11 @@ if command -v apt-get &>/dev/null; then
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
   DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 libpam0g:i386 libstdc++6:i386 -y
   apt-get clean
+  if [ "${libaio?}" = "libaio1t64" ]; then
+    # DB2 may not start without this link
+    libdir="/usr/lib/$(uname -m)-linux-gnu"
+    [ -f "${libdir?}/libaio.so.1t64" -a ! -f "${libdir?}/libaio.so.1" ] && ln -sr "${libdir?}/libaio.so.1t64" "${libdir?}/libaio.so.1"
+  fi
 elif command -v dnf &>/dev/null; then
   dnf install binutils file libaio numactl-libs libxcrypt-compat pam.i686 libstdc++.i686 -y
   dnf clean all
