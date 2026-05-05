@@ -22,6 +22,9 @@ if command -v apt-get &>/dev/null; then
 elif command -v dnf &>/dev/null; then
   dnf install binutils file libaio numactl-libs libxcrypt-compat pam.i686 libstdc++.i686 -y
   dnf clean all
+elif command -v yum &>/dev/null; then
+  yum install binutils file libaio numactl-libs libxcrypt-compat pam.i686 libstdc++.i686 -y
+  yum clean all
 elif command -v zypper &>/dev/null; then
   zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
   zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils pam-32bit libstdc++6-32bit
