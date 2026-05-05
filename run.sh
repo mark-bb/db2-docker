@@ -64,7 +64,7 @@ set -x
 docker run -itd \
     --privileged \
     -v ${DIR?}/database:/database \
-    -p 50011:50000 \
+    -p 50010:50000 \
     --env-file .env_list \
     --name ${CONT?} \
     ${ENTRYPOINT} \
