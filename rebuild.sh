@@ -45,7 +45,7 @@ fi
 : ${IMAGE_BASE="ubuntu:22.04"}
 
 IMAGE_SUFFIX="unknown"
-for img in ubuntu redhat suse amazon; do
+for img in ubuntu redhat suse amazon alma; do
   if printf "${IMAGE_BASE?}" | grep "${img?}" &>/dev/null; then
     IMAGE_SUFFIX="${img?}"
     break

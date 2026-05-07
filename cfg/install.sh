@@ -31,12 +31,16 @@ elif command -v zypper &>/dev/null; then
   zypper in -y awk libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim
   zypper clean --all
 
-  groupadd -g 8 mail
-  useradd -d /var/spool/mail -s /usr/sbin/nologin -g mail -u 8 mail
-  chown root:mail /var/spool/mail
+  if ! getent passwd mail &>/dev/null; then
+    groupadd -g 8 mail
+    useradd -d /var/spool/mail -s /usr/sbin/nologin -g mail -u 8 mail
+    chown root:mail /var/spool/mail
+  fi
 
-  groupadd -g 2 bin
-  useradd -d /bin -s /usr/sbin/nologin -g bin -u 2 bin
+  if ! getent passwd bin &>/dev/null; then
+    groupadd -g 2 bin
+    useradd -d /bin -s /usr/sbin/nologin -g bin -u 2 bin
+  fi
 else
   echo "Unknown package manager" >&2
   exit 1
