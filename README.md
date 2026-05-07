@@ -1,12 +1,15 @@
 # db2-docker
-DB2 v11.5+ for LUW root and non-root images building
+DB2 v11.1+ for LUW root and non-root images building
 ## Introduction
 These files allow to create root and non-root docker container images for [DB2 for LUW](https://www.ibm.com/docs/en/db2) RDBMS.  
-This was tested on DB2 for LUW 11.5.9 and 12.1.x with the following base x86-64 OS images:
+This was tested on DB2 for LUW 11.1, 11.5, 12.1 with the following base x86-64 OS images:
+- registry.access.redhat.com/ubi7
 - redhat/ubi9
+- redhat/ubi10
 - ubuntu:22.04
 - ubuntu:24.04
 - registry.suse.com/bci/bci-base:15.7
+- amazonlinux
 
 A container on a **root** image:
 - contains some specific DB2 version installed inside
@@ -64,10 +67,12 @@ ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /setup/config.sh
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /setup/add_users_n_groups.sh
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: ${DB2_HOME?}/instance/db2rfe *
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/chown ${DB2INSTANCE?} ${DB2_HOME?}/global.reg
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/newaliases
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/postfix *
 EOF
 ```
 - the `/setup/add_users_n_groups.sh` script just processes the `ADDGROUPS` and `ADDUSERS` variables to convert their data to the corresponding OS commands; you may use it on a running container as well setting these system variables accordingly
 - the DB2 database creation (which you may run on your own) either with just `CREATE DATABASE` or `db2sampl` takes enormous time I believe (up to 45-60 min as IBM for that on what happens inside); so, be patient; you may look at the process with `db2diag -f` (as the DB2 instance owner in case of non-root conainer) - some messages are printed more often there than to the container's log; the same is for the database upgrade
 - DB2 instance owner's and fenced user attributes like names, groups, ids can be configured during the images build with the `cfg[-nr]/utils.sh` script; you should leave them as is
-- the suse base OS image doesn't have 32bit repos configured, I had to add the corresponding to the 15.7 version one manually (see the `cfg[-nr]/install.sh` scripts); not an elegant solution but it seems to work...
+- some base OS images don't have 32-bit repos configured, so your 32-bit SP/UDF/apps may fail...
 
