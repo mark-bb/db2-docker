@@ -18,7 +18,7 @@ A container on a **root** image:
   
 A container on a **non-root** image:
 - doesn't contain any DB2 installed inside, just db2 installation prerequisites
-- it's much smaller (< 300MB non-root vs ~2.5GB root), but requires some DB2 installation image mounted for the 1-st run, when the corresponding DB2 code is installed during DB2 non-root instance creation in the db2inst1's home in a mounted directory
+- it's much smaller (~ 300MB non-root vs ~2.5GB root), but requires some DB2 installation image mounted for the 1-st run, when the corresponding DB2 code is installed during DB2 non-root instance creation in the db2inst1's home in a mounted directory
 - subsequent runs don't require any DB2 installation image to be mounted unless you want to install a DB2 Fix Pack update or a major version upgrade
 - can run as non-privileged
 - the DB2 instance owner (its parameters like name, uid, gid are configured during the image build time) runs some scripts and commands with `sudo`
