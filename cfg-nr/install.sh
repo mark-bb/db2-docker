@@ -27,7 +27,7 @@ elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
 elif command -v zypper &>/dev/null; then
   # zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
   # zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim pam-32bit libstdc++6-32bit
-  zypper in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim
+  zypper install -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim
   zypper clean --all
 
   if ! getent passwd mail &>/dev/null; then
