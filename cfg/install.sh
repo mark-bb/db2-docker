@@ -12,22 +12,23 @@ if command -v apt-get &>/dev/null; then
   dpkg --add-architecture i386
   apt-get update
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
-  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 libpam0g:i386 libstdc++6:i386 -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailx vi libpam0g:i386 libstdc++6:i386 -y
   apt-get clean
   if [ "${libaio?}" = "libaio1t64" ]; then
     # DB2 may not start without this link
     libdir="/usr/lib/$(uname -m)-linux-gnu"
     [ -f "${libdir?}/libaio.so.1t64" -a ! -f "${libdir?}/libaio.so.1" ] && ln -sr "${libdir?}/libaio.so.1t64" "${libdir?}/libaio.so.1"
   fi
-elif command -v dnf &>/dev/null; then
-  dnf install binutils file libaio numactl-libs libxcrypt-compat pam.i686 libstdc++.i686 -y
-  dnf clean all
-elif command -v yum &>/dev/null; then
-  yum install binutils file libaio numactl-libs libxcrypt-compat pam.i686 libstdc++.i686 -y
-  yum clean all
+elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
+  command -v dnf &>/dev/null && mgr=dnf || mgr=yum
+  ${mgr?} install binutils file libaio numactl-libs libxcrypt-compat postfix vim -y
+  ${mgr?} install pam.i686 libstdc++.i686 -y
+  ${mgr?} install mailx -y
+  ${mgr?} clean all
 elif command -v zypper &>/dev/null; then
-  zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
-  zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils pam-32bit libstdc++6-32bit
+  # zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
+  # zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim pam-32bit libstdc++6-32bit
+  zypper in -y awk libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim
   zypper clean --all
 
   groupadd -g 8 mail

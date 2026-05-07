@@ -1,5 +1,8 @@
 *.gz
+*.lic
 distrib/*
 tar-config.sh
-database/*
-database-nr/*
+database/data/*
+database/config/*
+database-nr/data/*
+database-nr/config/*

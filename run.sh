@@ -40,15 +40,13 @@ done
 [ "X${VRMF}" = "X" ] && { usage; exit 1; }
 : ${IMAGE_BASE="ubuntu:22.04"}
 
-if printf "${IMAGE_BASE?}" | grep "ubuntu" &>/dev/null; then
-  IMAGE_SUFFIX="ubuntu"
-elif printf "${IMAGE_BASE?}" | grep "redhat" &>/dev/null; then
-  IMAGE_SUFFIX="redhat"
-elif printf "${IMAGE_BASE?}" | grep "suse" &>/dev/null; then
-  IMAGE_SUFFIX="suse"
-else
-  IMAGE_SUFFIX="unknown"
-fi
+IMAGE_SUFFIX="unknown"
+for img in ubuntu redhat suse amazon; do
+  if printf "${IMAGE_BASE?}" | grep "${img?}" &>/dev/null; then
+    IMAGE_SUFFIX="${img?}"
+    break
+  fi
+done
 IMAGE=db2/db2-${IMAGE_SUFFIX?}:${VRMF?}
 [ ! -d "${DIR?}/distrib/db2/${VRMF?}" ] && { echo "No dir with db2 distributive: \"${DIR?}/distrib/db2/${VRMF?}\"" >&2; exit 1; }
 

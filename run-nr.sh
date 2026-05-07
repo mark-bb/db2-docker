@@ -51,15 +51,13 @@ fi
 : ${IMAGE_BASE="ubuntu:22.04"}
 : ${MEM="4"}
 
-if printf "${IMAGE_BASE?}" | grep "ubuntu" &>/dev/null; then
-  IMAGE_SUFFIX="ubuntu"
-elif printf "${IMAGE_BASE?}" | grep "redhat" &>/dev/null; then
-  IMAGE_SUFFIX="redhat"
-elif printf "${IMAGE_BASE?}" | grep "suse" &>/dev/null; then
-  IMAGE_SUFFIX="suse"
-else
-  IMAGE_SUFFIX="unknown"
-fi
+IMAGE_SUFFIX="unknown"
+for img in ubuntu redhat suse amazon; do
+  if printf "${IMAGE_BASE?}" | grep "${img?}" &>/dev/null; then
+    IMAGE_SUFFIX="${img?}"
+    break
+  fi
+done
 IMAGE=db2/db2-nr-${IMAGE_SUFFIX?}
 
 docker stop ${CONT?}
