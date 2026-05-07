@@ -27,7 +27,7 @@ A container on a **non-root** image:
 - to build a **root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
 `sudo ./rebuild.sh -b ubuntu:22.04 -v 11.5.9.0`  
 - to build a **non-root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
-`sudo ./rebuild-nr.sh ubuntu:22.04`  
+`sudo ./rebuild-nr.sh -b ubuntu:22.04`  
 
 - you get the `db2/db2[-nr][-suffix]` image in your local registry afterwards, where:  
   - `-nr` means non-root (absent for a **root** image)  
