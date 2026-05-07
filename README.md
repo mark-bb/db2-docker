@@ -24,21 +24,14 @@ A container on a **non-root** image:
 ## Building images
 - clone the project
 - create the `distrib/db2/v.r.m.f` directory corresponding to the DB2 installation image version for Linux x86-64 downloaded at the [Download Db2 fix packs by version for Db2 for Linux, UNIX and Windows](https://www.ibm.com/support/pages/download-db2-fix-packs-version-db2-linux-unix-and-windows) link; for example, if you want to use the DB2 11.5 Mod 9 Fix Pack 0 installation image, then you must have the `distrib/db2/11.5.9.0/server_dec/db2setup` file after the image uncompression
-- to build a **root** image run one the following command depending on what the base OS image (these ones below are tested at least) you want to use:  
+- to build a **root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
 `sudo ./rebuild.sh -b ubuntu:22.04 -v 11.5.9.0`  
-`sudo ./rebuild.sh -b ubuntu:24.04 -v 11.5.9.0`  
-`sudo ./rebuild.sh -b redhat/ubi9 -v 11.5.9.0`  
-`sudo ./rebuild.sh -b registry.suse.com/bci/bci-base:15.7 -v 11.5.9.0`
-
-- to build a **non-root** image run one the following command depending on what the base OS image (these ones below are tested at least) you want to use:  
+- to build a **non-root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
 `sudo ./rebuild-nr.sh ubuntu:22.04`  
-`sudo ./rebuild-nr.sh ubuntu:24.04`  
-`sudo ./rebuild-nr.sh redhat/ubi9`  
-`sudo ./rebuild-nr.sh registry.suse.com/bci/bci-base:15.7`
 
 - you get the `db2/db2[-nr][-suffix]` image in your local registry afterwards, where:  
   - `-nr` means non-root (absent for a **root** image)  
-  - `-suffix` is one of `ubuntu`, `redhat`, `suse` which corresponds to your base OS image selected  
+  - `-suffix` is one of `ubuntu`, `redhat`, `suse`, `amazon` which corresponds to your base OS image selected  
 ## Running containers  
 - **root** container:  
 `sudo ./run.sh -b ubuntu:22.04 -v 11.5.9.0`  
