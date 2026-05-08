@@ -11,6 +11,8 @@ This was tested on DB2 for LUW 11.1, 11.5, 12.1 with the following base x86-64 O
 - registry.suse.com/bci/bci-base:15.7
 - opensuse/leap:15.6
 - amazonlinux
+- rockylinux/rockylinux:10-ubi
+- almalinux:10
 
 A container on a **root** image:
 - contains some specific DB2 version installed inside

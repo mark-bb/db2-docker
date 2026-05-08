@@ -52,7 +52,7 @@ fi
 : ${MEM="4"}
 
 IMAGE_SUFFIX="unknown"
-for img in ubuntu redhat suse amazon alma; do
+for img in ubuntu redhat suse amazon alma rocky; do
   if printf "${IMAGE_BASE?}" | grep "${img?}" &>/dev/null; then
     IMAGE_SUFFIX="${img?}"
     break
@@ -78,6 +78,9 @@ docker run -itd \
     -m ${MEM?}GB \
     --memory-swap=$((MEM+4))GB \
     --memory-swappiness=5 \
+    --ulimit data=-1 \
+    --ulimit nofile=65536 \
+    --ulimit fsize=-1 \
     --sysctl kernel.shmmni=$((256*MEM)) \
     --sysctl kernel.shmmax=$((MEM*2**30)) \
     --sysctl kernel.shmall=$((2*MEM*2**30/$(getconf PAGESIZE))) \

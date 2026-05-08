@@ -23,6 +23,7 @@ elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
   command -v dnf &>/dev/null && mgr=dnf || mgr=yum
   ${mgr?} install binutils file libaio numactl-libs libxcrypt-compat postfix vim -y
   ${mgr?} install pam.i686 libstdc++.i686 -y
+  ${mgr?} install ksh -y
   ${mgr?} install mailx -y
   ${mgr?} clean all
 elif command -v zypper &>/dev/null; then
