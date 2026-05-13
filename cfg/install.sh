@@ -12,7 +12,7 @@ if command -v apt-get &>/dev/null; then
   dpkg --add-architecture i386
   apt-get update
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
-  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailx vi libpam0g:i386 libstdc++6:i386 -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim libpam0g:i386 libstdc++6:i386 -y
   apt-get clean
   if [ "${libaio?}" = "libaio1t64" ]; then
     # DB2 may not start without this link

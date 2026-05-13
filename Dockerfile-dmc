@@ -1,0 +1,13 @@
+ARG         IMAGE_BASE=almalinux
+
+FROM        $IMAGE_BASE
+MAINTAINER  Mark Barinstein <mark.mbarinstein@gmail.com>
+ARG         VRMF=3.1.9
+
+COPY        cfg-dmc/* /setup/
+ADD         distrib/db2dmc/ibm-datamgmtconsole-$VRMF-linux.tgz /opt/ibm/
+RUN         /setup/install.sh
+
+USER        root
+WORKDIR     /
+ENTRYPOINT  ["/setup/startup.sh"]

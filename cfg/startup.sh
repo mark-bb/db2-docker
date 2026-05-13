@@ -150,5 +150,5 @@ fi
 
 trap on_stop SIGTERM
 
-su - ${DB2INSTANCE?} -c "db2diag -f" | tee &
+su - ${DB2INSTANCE?} -c "db2diag -readfile -f" &
 wait

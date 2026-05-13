@@ -1,7 +1,7 @@
 ARG         IMAGE_BASE
 
 FROM        $IMAGE_BASE
-MAINTAINER  Mark Barinstein <mbarinstein@stsoft.ru>
+MAINTAINER  Mark Barinstein <mark.barinstein@gmail.com>
 ARG         INSTALLCMD=/setup/install.sh
 ARG         VRMF
 

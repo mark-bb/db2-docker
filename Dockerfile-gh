@@ -1,0 +1,13 @@
+ARG         IMAGE_BASE=almalinux
+
+FROM        $IMAGE_BASE
+MAINTAINER  Mark Barinstein <mark.mbarinstein@gmail.com>
+ARG         VRMF=1.1.0.0
+
+COPY        cfg-gh/* /setup/
+ADD         distrib/db2gh/ibm-db2GeniusHub-$VRMF-linux.tgz /opt/ibm/
+RUN         /setup/install.sh
+
+USER        root
+WORKDIR     /
+ENTRYPOINT  ["/setup/startup.sh"]

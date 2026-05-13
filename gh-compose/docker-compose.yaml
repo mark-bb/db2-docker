@@ -1,0 +1,49 @@
+x-common-config:
+  &common-config
+  environment:
+    DB2_IMAGE: ${DB2_IMAGE}
+    DB2GH_IMAGE: ${DB2GH_IMAGE}
+    HTTP_PORT: ${HTTP_PORT}
+    HTTPS_PORT: ${HTTPS_PORT}
+    REPOSITORYDB_HOST: ${REPOSITORYDB_HOST}
+    REPOSITORYDB_PORT: ${REPOSITORYDB_PORT}
+    REPOSITORYDB_DATABASENAME: ${REPOSITORYDB_DATABASENAME}
+    REPOSITORYDB_USER: ${REPOSITORYDB_USER}
+
+services:
+  db2repo:
+    <<: *common-config
+    image: ${DB2_IMAGE}
+    privileged: true
+    container_name: ${REPOSITORYDB_HOST}
+    hostname: ${REPOSITORYDB_HOST}
+    networks:
+      - db2_default
+    volumes:
+      - ./database:/database
+    environment:
+      - DB2PORT=${REPOSITORYDB_PORT}
+      - ADDGROUPS=db2ictrl:1002
+      - ADDUSERS=${REPOSITORYDB_USER}:1002:${REPOSITORYDB_PASSWORD}:db2ictrl
+      - DB2INST1_PASSWORD=passw0rd
+      - REPOSITORYDB_DATABASENAME=${REPOSITORYDB_DATABASENAME}
+      - REPOSITORYDB_USER=${REPOSITORYDB_USER}
+
+  db2gh:
+    <<: *common-config
+    image: ${DB2GH_IMAGE}
+    privileged: true
+    container_name: db2gh
+    hostname: db2gh
+    networks:
+      - db2_default
+    env_file:
+      - ./.env
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+      - "${HTTPS_PORT}:${HTTPS_PORT}"
+    depends_on:
+      - db2repo
+
+networks:
+  db2_default:

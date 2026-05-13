@@ -3,5 +3,9 @@
 *.lic
 distrib/*
 tar-config.sh
-*database*/data/*
-*database*/config/*
+database*/data/*
+database*/config/*
+dmc-compose/database*/data/*
+dmc-compose/database*/config/*
+gh-compose/database*/data/*
+gh-compose/database*/config/*
