@@ -12,7 +12,7 @@ if command -v apt-get &>/dev/null; then
   dpkg --add-architecture i386
   apt-get update
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
-  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim libpam0g:i386 libstdc++6:i386 -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim openssh-server openssh-client libpam0g:i386 libstdc++6:i386 -y
   apt-get clean
   if [ "${libaio?}" = "libaio1t64" ]; then
     # DB2 may not start without this link
@@ -21,7 +21,8 @@ if command -v apt-get &>/dev/null; then
   fi
 elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
   command -v dnf &>/dev/null && mgr=dnf || mgr=yum
-  ${mgr?} install binutils file libaio numactl-libs libxcrypt-compat postfix vim -y
+  ${mgr?} makecache
+  ${mgr?} install binutils file libaio numactl-libs libxcrypt-compat postfix vim openssh-server openssh-clients procps -y
   ${mgr?} install pam.i686 libstdc++.i686 -y
   ${mgr?} install ksh -y
   ${mgr?} install mailx -y
@@ -29,7 +30,8 @@ elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
 elif command -v zypper &>/dev/null; then
   # zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
   # zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim pam-32bit libstdc++6-32bit
-  zypper install -y awk libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim
+  zypper refresh
+  zypper install -y awk libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim openssh-server openssh-clients 
   zypper clean --all
 
   if ! getent passwd mail &>/dev/null; then

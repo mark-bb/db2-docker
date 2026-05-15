@@ -65,6 +65,10 @@ ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: ${DB2_HOME?}/instance/db2rfe *
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/chown ${DB2INSTANCE?} ${DB2_HOME?}/global.reg
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/newaliases
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/postfix *
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/newaliases
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/postfix *
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/ssh-keygen -A
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/sshd
 EOF
 ```
 - the `/setup/add_users_n_groups.sh` script just processes the `ADDGROUPS` and `ADDUSERS` variables to convert their data to the corresponding OS commands; you may use it on a running container as well setting these system variables accordingly

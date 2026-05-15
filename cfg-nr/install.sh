@@ -11,7 +11,8 @@ if command -v apt-get &>/dev/null; then
   dpkg --add-architecture i386
   apt-get update
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
-  DEBIAN_FRONTEND=noninteractive apt-get install ksh sudo binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim libpam0g:i386 libstdc++6:i386 -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ksh sudo binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim openssh-server openssh-client libpam0g:i386 libstdc++6:i386 -y
+  dir=/run/sshd; [ -d "${dir?}" ] || mkdir "${dir?}"  # Ubuntu 24.04
   apt-get clean
   if [ "${libaio?}" = "libaio1t64" ]; then
     # DB2 may not start without this link
@@ -20,15 +21,17 @@ if command -v apt-get &>/dev/null; then
   fi
 elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
   command -v dnf &>/dev/null && mgr=dnf || mgr=yum
-  ${mgr?} install sudo binutils file libaio numactl-libs libxcrypt-compat postfix vim -y
-  ${mgr?} install pam.i686 libstdc++.i686 -y
-  ${mgr?} install ksh -y
-  ${mgr?} install mailx -y
+  ${mgr?} makecache
+  ${mgr?} install -y sudo binutils file libaio numactl-libs libxcrypt-compat postfix vim openssh-server openssh-clients procps
+  ${mgr?} install -y pam.i686 libstdc++.i686
+  ${mgr?} install -y ksh
+  ${mgr?} install -y mailx
   ${mgr?} clean all
 elif command -v zypper &>/dev/null; then
   # zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
   # zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim pam-32bit libstdc++6-32bit
-  zypper install -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim
+  zypper refresh
+  zypper install -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim openssh-server openssh-clients
   zypper clean --all
 
   if ! getent passwd mail &>/dev/null; then
@@ -64,4 +67,6 @@ ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: ${DB2_HOME?}/instance/db2rfe *
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/chown ${DB2INSTANCE?} ${DB2_HOME?}/global.reg
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/newaliases
 ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/postfix *
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/bin/ssh-keygen -A
+${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/sshd
 EOF

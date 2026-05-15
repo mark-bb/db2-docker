@@ -86,5 +86,5 @@ fi
 
 trap on_stop SIGTERM
 
-db2diag -readfiles -f &
+db2diag -readfile -f &
 wait
