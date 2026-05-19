@@ -7,12 +7,15 @@ set -x
 VRMF=${1?"db2 version in the v.r.m.f format must be specified as a parameter"}
 DIR="$(cd "$(dirname "$0")" && pwd -P)"
 . "${DIR?}/utils.sh"
+SECRET_FILE="/run/secrets/secret"
+[ -f "${SECRET_FILE?}" ] && . "${SECRET_FILE?}"
 
 if command -v apt-get &>/dev/null; then
   dpkg --add-architecture i386
   apt-get update
+  [ -n "${ADD_PACKAGES}" ] && DEBIAN_FRONTEND=noninteractive apt-get install -y ${ADD_PACKAGES}
   if apt-cache policy libaio1t64 | grep '^libaio1t64' &>/dev/null; then libaio=libaio1t64; else libaio=libaio1; fi
-  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim openssh-server openssh-client libpam0g:i386 libstdc++6:i386 -y
+  DEBIAN_FRONTEND=noninteractive apt-get install ksh binutils file gzip tar ${libaio?} libcurl4 libnuma1 libxml2 postfix mailutils vim openssh-server openssh-client libpam0g:i386 libstdc++6:i386 -y
   apt-get clean
   if [ "${libaio?}" = "libaio1t64" ]; then
     # DB2 may not start without this link
@@ -22,7 +25,8 @@ if command -v apt-get &>/dev/null; then
 elif command -v dnf &>/dev/null || command -v yum &>/dev/null; then
   command -v dnf &>/dev/null && mgr=dnf || mgr=yum
   ${mgr?} makecache
-  ${mgr?} install binutils file libaio numactl-libs libxcrypt-compat postfix vim openssh-server openssh-clients procps -y
+  [ -n "${ADD_PACKAGES}" ] &&  ${mgr?} install -y ${ADD_PACKAGES}
+  ${mgr?} install binutils file gzip tar libaio numactl-libs libxcrypt-compat postfix vim openssh-server openssh-clients procps -y
   ${mgr?} install pam.i686 libstdc++.i686 -y
   ${mgr?} install ksh -y
   ${mgr?} install mailx -y
@@ -31,6 +35,7 @@ elif command -v zypper &>/dev/null; then
   # zypper addrepo -f http://download.opensuse.org/distribution/leap/15.6/repo/oss/ leap-oss
   # zypper --gpg-auto-import-keys in -y awk sudo libnuma1 libaio1 net-tools-deprecated binutils postfix mailx vim pam-32bit libstdc++6-32bit
   zypper refresh
+  [ -n "${ADD_PACKAGES}" ] && zypper install -y ${ADD_PACKAGES}
   zypper install -y awk libnuma1 libaio1 net-tools-deprecated binutils file gzip tar postfix mailx vim openssh-server openssh-clients 
   zypper clean --all
 
@@ -57,6 +62,15 @@ done
 for id in ${DB2IGROUP_GID?} ${DB2FGROUP_GID?}; do
   g=$(getent group  ${id?} 2>/dev/null) && groupdel   ${g%%:*}
 done
+
+[ -n "${ROOT_PASSWORD}" ] && echo "root:${ROOT_PASSWORD}" | chpasswd
+
+if [ -n "${SET_RELEASE}" ]; then
+  FILE="${SET_RELEASE%:*}"
+  CONTENT="${SET_RELEASE#*:}"
+  [ -f "${FILE?}" ] && mv "${FILE?}" "${FILE?}.ORIG"
+  printf "${CONTENT?}\n" | tee "${FILE?}"
+fi
 
 "${INSTDIR?}/db2prereqcheck" -i -s -l
 VR="$(printf "${VRMF?}" | awk -F'.' '{print $1"."$2}')"

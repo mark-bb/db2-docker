@@ -8,12 +8,13 @@ usage() {
   echo -e "Usage example: \n$0 \n\
           [-b | --base-image] base-image-name - like ubuntu:22.04 \n\
           [-v | --vrmf] v.r.m.f               - DB2 Installation image version, must be placed to ${DIR?}/distrib/db2/v.r.m.f/server_dec \n\
+	  [-s | --secret-file] some_env_file - will be mounted to /run/secrets/secret (optional) \n\
           " >&2; exit 1;
 }
 
 DIR="$(cd "$(dirname "$0")" && pwd -P)"
 # read the options
-TEMP=$(getopt -o heb:v: --long help,entrypoint,base-image:,vrmf: -n "$0" -- "$@")
+TEMP=$(getopt -o heb:v:s: --long help,entrypoint,base-image:,vrmf:secret-file -n "$0" -- "$@")
 [ $? -ne 0 ] && { echo "Terminating..." >&2; exit 1; }
 
 # Just for test
@@ -27,6 +28,8 @@ while true ; do
             IMAGE_BASE="$2"; shift 2;;
         -v|--vrmf)
             VRMF="$2"; shift 2;;
+        -s|--secret-file)
+            SECRET_FILE="$2"; shift 2;;
         --) shift; break;;
         -h|--help) usage; exit 1;;
         *)
@@ -43,6 +46,7 @@ fi
 
 # : ${IMAGE_BASE="redhat/ubi9"}
 : ${IMAGE_BASE="ubuntu:22.04"}
+[ -n "${SECRET_FILE}" ] && SECRET="--secret id=secret,src=${SECRET_FILE}" || SECRET=""
 
 IMAGE_SUFFIX="unknown"
 for img in ubuntu redhat suse amazon alma rocky; do
@@ -60,6 +64,7 @@ docker rm -f ${CONT?}
 docker rmi ${IMAGE} --force
 docker build \
         -f Dockerfile \
+	${SECRET?} \
         -t ${IMAGE?} \
         --build-arg VRMF=${VRMF?} \
         --build-arg IMAGE_BASE=${IMAGE_BASE?} \

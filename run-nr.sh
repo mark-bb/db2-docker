@@ -52,7 +52,7 @@ fi
 : ${MEM="4"}
 
 IMAGE_SUFFIX="unknown"
-for img in ubuntu redhat suse amazon alma rocky; do
+for img in ubuntu redhat suse amazon alma rocky red-soft debian; do
   if printf "${IMAGE_BASE?}" | grep "${img?}" &>/dev/null; then
     IMAGE_SUFFIX="${img?}"
     break

@@ -28,9 +28,13 @@ A container on a **non-root** image:
 - clone the project
 - create the `distrib/db2/v.r.m.f` directory corresponding to the DB2 installation image version for Linux x86-64 downloaded at the [Download Db2 fix packs by version for Db2 for Linux, UNIX and Windows](https://www.ibm.com/support/pages/download-db2-fix-packs-version-db2-linux-unix-and-windows) link; for example, if you want to use the DB2 11.5 Mod 9 Fix Pack 0 installation image, then you must have the `distrib/db2/11.5.9.0/server_dec/db2setup` file after the image uncompression
 - to build a **root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
-`sudo ./rebuild.sh -b ubuntu:22.04 -v 11.5.9.0`  
+`sudo ./rebuild.sh -b ubuntu:22.04 -v 11.5.9.0 [-s some_env_file]`  
 - to build a **non-root** image depending on what the base OS image (these ones below are tested at least) you want to use run something like this:  
-`sudo ./rebuild-nr.sh -b ubuntu:22.04`  
+`sudo ./rebuild-nr.sh -b ubuntu:22.04 [-s some_env_file]`  
+- `some_env_file` (see the `.env_build_*` files) supports the following variables:
+  - `ROOT_PASSWORD` - root password
+  - `SET_RELEASE`   - OS release file fake content
+  - `ADD_PACKAGES`  - additional packages to install 
 
 - you get the `db2/db2[-nr][-suffix]` image in your local registry afterwards, where:  
   - `-nr` means non-root (absent for a **root** image)  
@@ -72,7 +76,7 @@ ${DB2INSTANCE?} ALL=(ALL) NOPASSWD: /usr/sbin/sshd
 EOF
 ```
 - the `/setup/add_users_n_groups.sh` script just processes the `ADDGROUPS` and `ADDUSERS` variables to convert their data to the corresponding OS commands; you may use it on a running container as well setting these system variables accordingly
-- the DB2 database creation (which you may run on your own) either with just `CREATE DATABASE` or `db2sampl` takes enormous time I believe (up to 45-60 min as IBM for that on what happens inside); so, be patient; you may look at the process with `db2diag -f` (as the DB2 instance owner in case of non-root conainer) - some messages are printed more often there than to the container's log; the same is for the database upgrade
+- the DB2 database creation (which you may run on your own) either with just `CREATE DATABASE` or `db2sampl` takes enormous time I believe (up to 45-60 min, ask IBM for that on what happens inside); so, be patient; you may look at the process with `db2diag -f` (as the DB2 instance owner in case of non-root conainer) - some messages are printed more often there than to the container's log; the same is for the database upgrade
 - DB2 instance owner's and fenced user attributes like names, groups, ids can be configured during the images build with the `cfg[-nr]/utils.sh` script; you should leave them as is
 - some base OS images don't have 32-bit repos configured, so your 32-bit SP/UDF/apps may fail...
 

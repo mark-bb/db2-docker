@@ -5,7 +5,7 @@ MAINTAINER  Mark Barinstein <mark.barinstein@gmail.com>
 ARG         INSTALLCMD=/setup/install.sh
 
 COPY        cfg-nr/* /setup/
-RUN         chmod +x $INSTALLCMD && $INSTALLCMD
+RUN         --mount=type=secret,id=secret chmod +x $INSTALLCMD && $INSTALLCMD
 
 EXPOSE      50000 
 USER        db2inst1
